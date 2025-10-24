@@ -5,52 +5,41 @@ import (
 	"net/http"
 
 	"pet-manage-be/handlers"
-	"pet-manage-be/models"
 
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	// Load environment variables
-	// err := godotenv.Load()
-	// if err != nil {
-	// 	log.Println("No .env file found")
-	// }
+	// Gin 라우터 생성
+	r := gin.Default()
 
-	status1 := models.StatusActive
-	status2 := models.StatusInactive
-	log.Println("status log", status1, status2)
+	// 미들웨어 설정
+	r.Use(gin.Logger())     // 요청 로깅
+	r.Use(gin.Recovery())   // 패닉 복구
+	r.Use(corsMiddleware()) // CORS 처리
 
-	// // Initialize database
-	// database.ConnectDB()
-	// database.MigrateDB()
+	// 라우트 설정
+	setupRoutes(r)
 
-	// // Create Gin router
-	// r := gin.Default()
-
-	// // Middleware
-	// r.Use(gin.Logger())
-	// r.Use(gin.Recovery())
-	// r.Use(corsMiddleware())
-
-	// // Routes
-	// setupRoutes(r)
-
-	// // Start server
-	// port := ":8080"
-	// log.Printf("Server starting on port %s", port)
-	// if err := r.Run(port); err != nil {
-	// 	log.Fatal("Failed to start server:", err)
-	// }
+	// 서버 시작
+	port := ":8080"
+	log.Printf("서버가 포트 %s에서 시작됩니다", port)
+	if err := r.Run(port); err != nil {
+		log.Fatal("서버 시작 실패:", err)
+	}
 }
 
-// CORS middleware
+// CORS 미들웨어 - 크로스 오리진 요청 허용
 func corsMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		// 모든 오리진에서의 요청 허용
 		c.Header("Access-Control-Allow-Origin", "*")
+		// 허용할 HTTP 메서드들
 		c.Header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+		// 허용할 헤더들
 		c.Header("Access-Control-Allow-Headers", "Origin, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
 
+		// OPTIONS 요청 처리 (preflight 요청)
 		if c.Request.Method == "OPTIONS" {
 			c.AbortWithStatus(204)
 			return
@@ -60,9 +49,9 @@ func corsMiddleware() gin.HandlerFunc {
 	}
 }
 
-// Setup all routes
+// 모든 라우트 설정
 func setupRoutes(r *gin.Engine) {
-	// Health check
+	// 헬스체크 엔드포인트 - 서비스 상태 확인
 	r.GET("/health", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"status":  "ok",
@@ -70,38 +59,38 @@ func setupRoutes(r *gin.Engine) {
 		})
 	})
 
-	// API v1 routes
+	// API v1 라우트 그룹
 	v1 := r.Group("/api/v1")
 	{
-		// Pet routes
+		// 펫 관련 라우트
 		pets := v1.Group("/pets")
 		{
-			pets.GET("", handlers.GetPets)
-			pets.GET("/:id", handlers.GetPet)
-			pets.POST("", handlers.CreatePet)
-			pets.PUT("/:id", handlers.UpdatePet)
-			pets.DELETE("/:id", handlers.DeletePet)
+			pets.GET("", handlers.GetPets)          // 펫 목록 조회
+			pets.GET("/:id", handlers.GetPet)       // 특정 펫 조회
+			pets.POST("", handlers.CreatePet)       // 펫 생성
+			pets.PUT("/:id", handlers.UpdatePet)    // 펫 수정
+			pets.DELETE("/:id", handlers.DeletePet) // 펫 삭제
 		}
 
-		// Owner routes
+		// 소유자 관련 라우트
 		owners := v1.Group("/owners")
 		{
-			owners.GET("", handlers.GetOwners)
-			owners.GET("/:id", handlers.GetOwner)
-			owners.POST("", handlers.CreateOwner)
-			owners.PUT("/:id", handlers.UpdateOwner)
-			owners.DELETE("/:id", handlers.DeleteOwner)
+			owners.GET("", handlers.GetOwners)          // 소유자 목록 조회
+			owners.GET("/:id", handlers.GetOwner)       // 특정 소유자 조회
+			owners.POST("", handlers.CreateOwner)       // 소유자 생성
+			owners.PUT("/:id", handlers.UpdateOwner)    // 소유자 수정
+			owners.DELETE("/:id", handlers.DeleteOwner) // 소유자 삭제
 		}
 
-		// Meal routes
+		// 급식 관련 라우트
 		meals := v1.Group("/meals")
 		{
-			meals.GET("/types", handlers.GetMealTypes)
-			meals.GET("/items", handlers.GetMealItems)
-			meals.GET("/items/:id", handlers.GetMealItem)
-			meals.POST("/items", handlers.CreateMealItem)
-			meals.PUT("/items/:id", handlers.UpdateMealItem)
-			meals.DELETE("/items/:id", handlers.DeleteMealItem)
+			meals.GET("/types", handlers.GetMealTypes)          // 급식 타입 조회
+			meals.GET("/items", handlers.GetMealItems)          // 급식 아이템 목록 조회
+			meals.GET("/items/:id", handlers.GetMealItem)       // 특정 급식 아이템 조회
+			meals.POST("/items", handlers.CreateMealItem)       // 급식 아이템 생성
+			meals.PUT("/items/:id", handlers.UpdateMealItem)    // 급식 아이템 수정
+			meals.DELETE("/items/:id", handlers.DeleteMealItem) // 급식 아이템 삭제
 		}
 	}
 }
