@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"pet-manage-be/internal/domain/dto"
 	"pet-manage-be/internal/domain/entities"
 	"pet-manage-be/internal/usecase/meal"
 
@@ -69,7 +70,7 @@ func (h *MealHandler) GetMealItemByID(c *gin.Context) {
 
 // CreateMealItem 새로운 급식 아이템 생성
 func (h *MealHandler) CreateMealItem(c *gin.Context) {
-	var req entities.MealItemCreateRequest
+	var req dto.MealItemCreateRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"success": false,
@@ -106,7 +107,7 @@ func (h *MealHandler) UpdateMealItem(c *gin.Context) {
 		return
 	}
 
-	var req entities.MealItemUpdateRequest
+	var req dto.MealItemUpdateRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"success": false,
@@ -174,10 +175,10 @@ func (h *MealHandler) GetMealItemsByType(c *gin.Context) {
 	var mealType entities.MealType
 
 	switch typeStr {
-	case "FIXED":
-		mealType = entities.MealTypeFixed
-	case "VARIATION":
-		mealType = entities.MealTypeVariation
+	case "사료":
+		mealType = entities.MealTypeFeed
+	case "간식":
+		mealType = entities.MealTypeSnack
 	default:
 		c.JSON(http.StatusBadRequest, gin.H{
 			"success": false,

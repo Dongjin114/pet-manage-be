@@ -2,6 +2,8 @@ package di
 
 import (
 	"pet-manage-be/internal/infrastructure/config"
+	"pet-manage-be/internal/infrastructure/database"
+	"pet-manage-be/internal/infrastructure/migrations"
 	"pet-manage-be/internal/infrastructure/repository"
 	"pet-manage-be/internal/interface/http/handlers"
 	"pet-manage-be/internal/interface/http/routes"
@@ -23,6 +25,16 @@ func NewContainer() *Container {
 	// 설정 로드
 	cfg := config.Load()
 
+	// 데이터베이스 연결
+	if err := database.Connect(&cfg.Database); err != nil {
+		panic("데이터베이스 연결 실패: " + err.Error())
+	}
+
+	// 마이그레이션 실행
+	if err := migrations.RunMigrations(database.GetDB()); err != nil {
+		panic("마이그레이션 실패: " + err.Error())
+	}
+
 	// Gin 라우터 생성
 	r := gin.Default()
 
@@ -35,6 +47,7 @@ func NewContainer() *Container {
 	ownerRepo := repository.NewOwnerRepository()
 	petRepo := repository.NewPetRepository()
 	mealRepo := repository.NewMealRepository()
+	mealRepo.SetDB(database.GetDB())
 
 	// 유스케이스 생성
 	ownerUsecase := owner.NewOwnerUsecase(ownerRepo)

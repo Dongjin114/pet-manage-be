@@ -1,15 +1,19 @@
 version: "3.8"
 
 services:
-  pet-api:
-    build: .
-    ports:
-      - "8080:8080"
+  postgres:
+    image: postgres:15
+    container_name: pet-manage-db
     environment:
-      - GIN_MODE=debug
-      - PORT=8080
+      POSTGRES_DB: petdb
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: 12345678
+    ports:
+      - "5432:5432"
     volumes:
-      - .:/app
-    working_dir: /app
-    command: go run main.go
+      - pet-manage-volume:/var/lib/postgresql/data
     restart: unless-stopped
+
+volumes:
+  pet-manage-volume:
+    name: pet-manage-volume

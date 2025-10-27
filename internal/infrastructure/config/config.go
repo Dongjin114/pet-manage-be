@@ -1,7 +1,10 @@
 package config
 
 import (
+	"log"
 	"os"
+
+	"github.com/joho/godotenv"
 )
 
 // Config 애플리케이션 설정
@@ -27,6 +30,11 @@ type DatabaseConfig struct {
 
 // Load 설정 로드
 func Load() *Config {
+	// .env 파일 로드
+	if err := godotenv.Load(); err != nil {
+		log.Println("Warning: .env 파일을 찾을 수 없습니다:", err)
+	}
+
 	return &Config{
 		Server: ServerConfig{
 			Port: getEnv("PORT", "8080"),
@@ -36,7 +44,7 @@ func Load() *Config {
 			Host:     getEnv("DB_HOST", "localhost"),
 			Port:     getEnv("DB_PORT", "5432"),
 			User:     getEnv("DB_USER", "user"),
-			Password: getEnv("DB_PASSWORD", "password"),
+			Password: getEnv("DB_PASSWORD", "12345678"),
 			Name:     getEnv("DB_NAME", "petdb"),
 		},
 	}
