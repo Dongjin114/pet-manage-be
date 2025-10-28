@@ -6,6 +6,19 @@ import (
 	"log"
 )
 
+// 공통 컬럼 정의
+const (
+	CommonColumns = `
+		created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+		created_by BIGINT,
+		modified_at TIMESTAMPTZ,
+		modified_by BIGINT,
+		deleted_at TIMESTAMPTZ,
+		deleted_by BIGINT,
+		is_deleted BOOLEAN DEFAULT FALSE
+	`
+)
+
 // RunMigrations 마이그레이션 실행
 func RunMigrations(db *sql.DB) error {
 	log.Println("PostgreSQL 데이터베이스 마이그레이션 시작...")
@@ -15,18 +28,13 @@ func RunMigrations(db *sql.DB) error {
 		sql  string
 	}{
 		{
-			name: "1",
+			name: "사용자 테이블",
 			sql: `
 				CREATE TABLE IF NOT EXISTS owners (
 					id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-					name VARCHAR(100) NOT NULL,
-					email VARCHAR(255) UNIQUE NOT NULL,
-					phone VARCHAR(20),
-					address TEXT,
-					created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
-					modified_at TIMESTAMPTZ,
-					deleted_at TIMESTAMPTZ,
-					is_deleted BOOLEAN DEFAULT FALSE
+					email VARCHAR(100) NOT NULL,
+					name VARCHAR(255) UNIQUE NOT NULL,
+					` + CommonColumns + `
 				);
 			`,
 		},
@@ -35,24 +43,21 @@ func RunMigrations(db *sql.DB) error {
 			sql: `
 				CREATE TABLE IF NOT EXISTS pets (
 					id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-					owner_id BIGINT NOT NULL REFERENCES owners(id),
+					owner_id BIGINT NOT NULL,
 					name VARCHAR(100) NOT NULL,
 					species VARCHAR(50) NOT NULL,
 					breed VARCHAR(100),
 					age INTEGER,
 					weight DECIMAL(5,2),
 					gender VARCHAR(10),
-					created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
-					modified_at TIMESTAMPTZ,
-					deleted_at TIMESTAMPTZ,
-					is_deleted BOOLEAN DEFAULT FALSE
+					` + CommonColumns + `
 				);
 			`,
 		},
 		{
 			name: "3",
 			sql: `
-				CREATE TABLE IF NOT EXISTS meal_items (
+				CREATE TABLE IF NOT EXISTS meals (
 					id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
 					pet_user_role_id BIGINT NOT NULL,
 					data_type VARCHAR(20) NOT NULL CHECK (data_type IN ('FIXED', 'VARIATION')),
@@ -60,25 +65,19 @@ func RunMigrations(db *sql.DB) error {
 					meal_category VARCHAR(100) NOT NULL,
 					name VARCHAR(200) NOT NULL,
 					unit_type VARCHAR(10) NOT NULL CHECK (unit_type IN ('g', 'ml', '개', '포')),
-					created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
-					modified_at TIMESTAMPTZ,
-					deleted_at TIMESTAMPTZ,
-					is_deleted BOOLEAN DEFAULT FALSE
+					` + CommonColumns + `
 				);
 			`,
 		},
 		{
 			name: "4",
 			sql: `
-				CREATE TABLE IF NOT EXISTS meal_item_units (
+				CREATE TABLE IF NOT EXISTS meal_units (
 					id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-					meal_item_id BIGINT NOT NULL REFERENCES meal_items(id),
+					meal_id BIGINT NOT NULL,
 					unit_type VARCHAR(10) NOT NULL CHECK (unit_type IN ('g', 'ml', '개', '포')),
 					amount DECIMAL(10,2) NOT NULL,
-					created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
-					modified_at TIMESTAMPTZ,
-					deleted_at TIMESTAMPTZ,
-					is_deleted BOOLEAN DEFAULT FALSE
+					` + CommonColumns + `
 				);
 			`,
 		},
@@ -87,17 +86,14 @@ func RunMigrations(db *sql.DB) error {
 			sql: `
 				CREATE TABLE IF NOT EXISTS meal_histories (
 					id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-					pet_id BIGINT NOT NULL REFERENCES pets(id),
-					meal_item_id BIGINT NOT NULL REFERENCES meal_items(id),
+					pet_id BIGINT NOT NULL,
+					meal_id BIGINT NOT NULL,
 					meal_date DATE NOT NULL,
 					meal_time TIME NOT NULL,
 					amount DECIMAL(10,2) NOT NULL,
 					unit VARCHAR(10) NOT NULL,
 					notes TEXT,
-					created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
-					modified_at TIMESTAMPTZ,
-					deleted_at TIMESTAMPTZ,
-					is_deleted BOOLEAN DEFAULT FALSE
+					` + CommonColumns + `
 				);
 			`,
 		},
@@ -106,13 +102,10 @@ func RunMigrations(db *sql.DB) error {
 			sql: `
 				CREATE TABLE IF NOT EXISTS meal_history_units (
 					id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-					meal_history_id BIGINT NOT NULL REFERENCES meal_histories(id),
+					meal_history_id BIGINT NOT NULL,
 					unit_type VARCHAR(10) NOT NULL CHECK (unit_type IN ('g', 'ml', '개', '포')),
 					amount DECIMAL(10,2) NOT NULL,
-					created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
-					modified_at TIMESTAMPTZ,
-					deleted_at TIMESTAMPTZ,
-					is_deleted BOOLEAN DEFAULT FALSE
+					` + CommonColumns + `
 				);
 			`,
 		},

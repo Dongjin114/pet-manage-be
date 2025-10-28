@@ -23,9 +23,9 @@ func NewMealHandler(mealUsecase *meal.MealUsecase) *MealHandler {
 	}
 }
 
-// GetAllMealItems 모든 급식 아이템 조회
-func (h *MealHandler) GetAllMealItems(c *gin.Context) {
-	mealItems, err := h.mealUsecase.GetAllMealItems(c.Request.Context())
+// GetAllMealss 모든 급식 아이템 조회
+func (h *MealHandler) GetAllMealss(c *gin.Context) {
+	Mealss, err := h.mealUsecase.GetAllMealss(c.Request.Context())
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"success": false,
@@ -36,13 +36,13 @@ func (h *MealHandler) GetAllMealItems(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"success": true,
-		"data":    mealItems,
-		"count":   len(mealItems),
+		"data":    Mealss,
+		"count":   len(Mealss),
 	})
 }
 
-// GetMealItemByID 특정 급식 아이템 조회
-func (h *MealHandler) GetMealItemByID(c *gin.Context) {
+// GetMealsByID 특정 급식 아이템 조회
+func (h *MealHandler) GetMealsByID(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.ParseUint(idStr, 10, 32)
 	if err != nil {
@@ -53,7 +53,7 @@ func (h *MealHandler) GetMealItemByID(c *gin.Context) {
 		return
 	}
 
-	mealItem, err := h.mealUsecase.GetMealItemByID(c.Request.Context(), uint(id))
+	Meals, err := h.mealUsecase.GetMealsByID(c.Request.Context(), uint(id))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"success": false,
@@ -64,13 +64,13 @@ func (h *MealHandler) GetMealItemByID(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"success": true,
-		"data":    mealItem,
+		"data":    Meals,
 	})
 }
 
-// CreateMealItem 새로운 급식 아이템 생성
-func (h *MealHandler) CreateMealItem(c *gin.Context) {
-	var req dto.MealItemCreateRequest
+// CreateMeals 새로운 급식 아이템 생성
+func (h *MealHandler) CreateMeals(c *gin.Context) {
+	var req dto.MealsCreateRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"success": false,
@@ -79,7 +79,7 @@ func (h *MealHandler) CreateMealItem(c *gin.Context) {
 		return
 	}
 
-	mealItem, err := h.mealUsecase.CreateMealItem(c.Request.Context(), req)
+	Meals, err := h.mealUsecase.CreateMeals(c.Request.Context(), req)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"success": false,
@@ -90,13 +90,13 @@ func (h *MealHandler) CreateMealItem(c *gin.Context) {
 
 	c.JSON(http.StatusCreated, gin.H{
 		"success": true,
-		"data":    mealItem,
+		"data":    Meals,
 		"message": "급식 아이템이 성공적으로 생성되었습니다",
 	})
 }
 
-// UpdateMealItem 급식 아이템 수정
-func (h *MealHandler) UpdateMealItem(c *gin.Context) {
+// UpdateMeals 급식 아이템 수정
+func (h *MealHandler) UpdateMeals(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.ParseUint(idStr, 10, 32)
 	if err != nil {
@@ -107,7 +107,7 @@ func (h *MealHandler) UpdateMealItem(c *gin.Context) {
 		return
 	}
 
-	var req dto.MealItemUpdateRequest
+	var req dto.MealsUpdateRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"success": false,
@@ -116,7 +116,7 @@ func (h *MealHandler) UpdateMealItem(c *gin.Context) {
 		return
 	}
 
-	if err := h.mealUsecase.UpdateMealItem(c.Request.Context(), uint(id), req); err != nil {
+	if err := h.mealUsecase.UpdateMeals(c.Request.Context(), uint(id), req); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"success": false,
 			"error":   err.Error(),
@@ -131,8 +131,8 @@ func (h *MealHandler) UpdateMealItem(c *gin.Context) {
 	})
 }
 
-// DeleteMealItem 급식 아이템 삭제
-func (h *MealHandler) DeleteMealItem(c *gin.Context) {
+// DeleteMeals 급식 아이템 삭제
+func (h *MealHandler) DeleteMeals(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.ParseUint(idStr, 10, 32)
 	if err != nil {
@@ -143,7 +143,7 @@ func (h *MealHandler) DeleteMealItem(c *gin.Context) {
 		return
 	}
 
-	if err := h.mealUsecase.DeleteMealItem(c.Request.Context(), uint(id)); err != nil {
+	if err := h.mealUsecase.DeleteMeals(c.Request.Context(), uint(id)); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"success": false,
 			"error":   err.Error(),
@@ -169,8 +169,8 @@ func (h *MealHandler) GetMealTypes(c *gin.Context) {
 	})
 }
 
-// GetMealItemsByType 타입별 급식 아이템 조회
-func (h *MealHandler) GetMealItemsByType(c *gin.Context) {
+// GetMealssByType 타입별 급식 아이템 조회
+func (h *MealHandler) GetMealssByType(c *gin.Context) {
 	typeStr := c.Param("type")
 	var mealType entities.MealType
 
@@ -187,7 +187,7 @@ func (h *MealHandler) GetMealItemsByType(c *gin.Context) {
 		return
 	}
 
-	mealItems, err := h.mealUsecase.GetMealItemsByType(c.Request.Context(), mealType)
+	Mealss, err := h.mealUsecase.GetMealssByType(c.Request.Context(), mealType)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"success": false,
@@ -198,7 +198,7 @@ func (h *MealHandler) GetMealItemsByType(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"success": true,
-		"data":    mealItems,
-		"count":   len(mealItems),
+		"data":    Mealss,
+		"count":   len(Mealss),
 	})
 }

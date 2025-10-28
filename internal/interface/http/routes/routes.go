@@ -45,13 +45,13 @@ func SetupRoutes(r *gin.Engine, ownerHandler *handlers.OwnerHandler, petHandler 
 		// 급식 관련 라우트
 		meals := v1.Group("/meals")
 		{
-			meals.GET("/types", mealHandler.GetMealTypes)                  // 급식 타입 조회
-			meals.GET("/items", mealHandler.GetAllMealItems)               // 급식 아이템 목록 조회
-			meals.GET("/items/:id", mealHandler.GetMealItemByID)           // 특정 급식 아이템 조회
-			meals.POST("/items", mealHandler.CreateMealItem)               // 급식 아이템 생성
-			meals.PUT("/items/:id", mealHandler.UpdateMealItem)            // 급식 아이템 수정
-			meals.DELETE("/items/:id", mealHandler.DeleteMealItem)         // 급식 아이템 삭제
-			meals.GET("/items/type/:type", mealHandler.GetMealItemsByType) // 타입별 급식 아이템 조회
+			meals.GET("/types", mealHandler.GetMealTypes)               // 급식 타입 조회
+			meals.GET("/items", mealHandler.GetAllMealss)               // 급식 아이템 목록 조회
+			meals.GET("/items/:id", mealHandler.GetMealsByID)           // 특정 급식 아이템 조회
+			meals.POST("/items", mealHandler.CreateMeals)               // 급식 아이템 생성
+			meals.PUT("/items/:id", mealHandler.UpdateMeals)            // 급식 아이템 수정
+			meals.DELETE("/items/:id", mealHandler.DeleteMeals)         // 급식 아이템 삭제
+			meals.GET("/items/type/:type", mealHandler.GetMealssByType) // 타입별 급식 아이템 조회
 		}
 	}
 }

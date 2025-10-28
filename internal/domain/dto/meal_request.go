@@ -5,8 +5,8 @@ import (
 	"time"
 )
 
-// MealItemCreateRequest 사료/간식 아이템 생성 요청
-type MealItemCreateRequest struct {
+// MealsCreateRequest 사료/간식 아이템 생성 요청
+type MealsCreateRequest struct {
 	PetUserRoleID uint              `json:"pet_user_role_id" validate:"required"`
 	DataType      entities.DataType `json:"data_type" validate:"required,oneof=FIXED VARIATION"`
 	MealType      entities.MealType `json:"meal_type" validate:"required"`
@@ -15,8 +15,8 @@ type MealItemCreateRequest struct {
 	UnitType      entities.UnitType `json:"unit_type" validate:"required"`
 }
 
-// MealItemUpdateRequest 사료/간식 아이템 수정 요청
-type MealItemUpdateRequest struct {
+// MealsUpdateRequest 사료/간식 아이템 수정 요청
+type MealsUpdateRequest struct {
 	DataType     *entities.DataType `json:"data_type,omitempty"`
 	MealType     *entities.MealType `json:"meal_type,omitempty"`
 	MealCategory *string            `json:"meal_category,omitempty"`
@@ -24,24 +24,24 @@ type MealItemUpdateRequest struct {
 	UnitType     *entities.UnitType `json:"unit_type,omitempty"`
 }
 
-// MealItemUnitCreateRequest 사료/간식 단위 생성 요청
-type MealItemUnitCreateRequest struct {
-	MealItemID   uint                  `json:"meal_item_id" validate:"required"`
-	MealItemType entities.MealItemType `json:"meal_item_type" validate:"required"`
+// MealsUnitCreateRequest 사료/간식 단위 생성 요청
+type MealsUnitCreateRequest struct {
+	MealsID      uint                  `json:"meal_item_id" validate:"required"`
+	MealUnitType entities.MealUnitType `json:"meal_item_type" validate:"required"`
 	Unit         string                `json:"unit" validate:"required"`
 	UnitValue    string                `json:"unit_value" validate:"required"`
 }
 
-// MealItemUnitUpdateRequest 사료/간식 단위 수정 요청
-type MealItemUnitUpdateRequest struct {
-	MealItemType *entities.MealItemType `json:"meal_item_type,omitempty"`
+// MealsUnitUpdateRequest 사료/간식 단위 수정 요청
+type MealsUnitUpdateRequest struct {
+	MealUnitType *entities.MealUnitType `json:"meal_item_type,omitempty"`
 	Unit         *string                `json:"unit,omitempty"`
 	UnitValue    *string                `json:"unit_value,omitempty"`
 }
 
 // MealHistoryCreateRequest 급여 기록 생성 요청
 type MealHistoryCreateRequest struct {
-	MealItemID   uint              `json:"meal_item_id" validate:"required"`
+	MealsID      uint              `json:"meal_item_id" validate:"required"`
 	HistoryDate  time.Time         `json:"history_date" validate:"required"`
 	MealType     entities.MealType `json:"meal_type" validate:"required"`
 	Name         string            `json:"name" validate:"required"`
@@ -63,14 +63,14 @@ type MealHistoryUpdateRequest struct {
 // MealHistoryUnitCreateRequest 급여 기록 단위 생성 요청
 type MealHistoryUnitCreateRequest struct {
 	MealHistoryID uint                  `json:"meal_histories_id" validate:"required"`
-	MealItemType  entities.MealItemType `json:"meal_item_type" validate:"required"`
+	MealUnitType  entities.MealUnitType `json:"meal_item_type" validate:"required"`
 	Unit          string                `json:"unit" validate:"required"`
 	UnitValue     string                `json:"unit_value" validate:"required"`
 }
 
 // MealHistoryUnitUpdateRequest 급여 기록 단위 수정 요청
 type MealHistoryUnitUpdateRequest struct {
-	MealItemType *entities.MealItemType `json:"meal_item_type,omitempty"`
+	MealUnitType *entities.MealUnitType `json:"meal_item_type,omitempty"`
 	Unit         *string                `json:"unit,omitempty"`
 	UnitValue    *string                `json:"unit_value,omitempty"`
 }

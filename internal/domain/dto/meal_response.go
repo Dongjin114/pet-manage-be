@@ -5,8 +5,8 @@ import (
 	"time"
 )
 
-// MealItemResponse 사료/간식 아이템 응답
-type MealItemResponse struct {
+// MealsResponse 사료/간식 아이템 응답
+type MealsResponse struct {
 	ID            uint              `json:"id"`
 	PetUserRoleID uint              `json:"pet_user_role_id"`
 	DataType      entities.DataType `json:"data_type"`
@@ -20,17 +20,17 @@ type MealItemResponse struct {
 	IsDeleted     bool              `json:"is_deleted"`
 }
 
-// MealItemWithUnitsResponse 사료/간식 아이템과 단위 정보를 포함한 응답
-type MealItemWithUnitsResponse struct {
-	MealItemResponse
-	Units []MealItemUnitResponse `json:"units"`
+// MealsWithUnitsResponse 사료/간식 아이템과 단위 정보를 포함한 응답
+type MealsWithUnitsResponse struct {
+	MealsResponse
+	Units []MealsUnitResponse `json:"units"`
 }
 
-// MealItemUnitResponse 사료/간식 단위 응답
-type MealItemUnitResponse struct {
+// MealsUnitResponse 사료/간식 단위 응답
+type MealsUnitResponse struct {
 	ID           uint                  `json:"id"`
-	MealItemID   uint                  `json:"meal_item_id"`
-	MealItemType entities.MealItemType `json:"meal_item_type"`
+	MealsID      uint                  `json:"meal_item_id"`
+	MealUnitType entities.MealUnitType `json:"meal_item_type"`
 	Unit         string                `json:"unit"`
 	UnitValue    string                `json:"unit_value"`
 }
@@ -38,7 +38,7 @@ type MealItemUnitResponse struct {
 // MealHistoryResponse 급여 기록 응답
 type MealHistoryResponse struct {
 	ID           uint              `json:"id"`
-	MealItemID   uint              `json:"meal_item_id"`
+	MealsID      uint              `json:"meal_item_id"`
 	HistoryDate  time.Time         `json:"history_date"`
 	MealType     entities.MealType `json:"meal_type"`
 	Name         string            `json:"name"`
@@ -60,7 +60,7 @@ type MealHistoryWithUnitsResponse struct {
 type MealHistoryUnitResponse struct {
 	ID            uint                  `json:"id"`
 	MealHistoryID uint                  `json:"meal_histories_id"`
-	MealItemType  entities.MealItemType `json:"meal_item_type"`
+	MealUnitType  entities.MealUnitType `json:"meal_item_type"`
 	Unit          string                `json:"unit"`
 	UnitValue     string                `json:"unit_value"`
 }
@@ -83,8 +83,8 @@ type UnitTypesResponse struct {
 	Count int                 `json:"count"`
 }
 
-// MealItemTypesResponse 식이 타입 목록 응답
-type MealItemTypesResponse struct {
-	Types []entities.MealItemType `json:"types"`
+// MealUnitTypesResponse 식이 타입 목록 응답
+type MealUnitTypesResponse struct {
+	Types []entities.MealUnitType `json:"types"`
 	Count int                     `json:"count"`
 }

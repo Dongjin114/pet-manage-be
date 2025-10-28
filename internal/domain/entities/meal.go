@@ -30,19 +30,19 @@ const (
 	UnitTypeCup      UnitType = "컵"
 )
 
-// MealItemType 식이 타입
-type MealItemType string
+// MealUnitType 식이 타입
+type MealUnitType string
 
 const (
-	MealItemTypeRawFeeding MealItemType = "원체급여량"
-	MealItemTypeCalorie    MealItemType = "칼로리"
-	MealItemTypeProtein    MealItemType = "단백질"
-	MealItemTypeFat        MealItemType = "지방"
-	MealItemTypeCarb       MealItemType = "탄수화물"
+	MealUnitTypeRawFeeding MealUnitType = "원체급여량"
+	MealUnitTypeCalorie    MealUnitType = "칼로리"
+	MealUnitTypeProtein    MealUnitType = "단백질"
+	MealUnitTypeFat        MealUnitType = "지방"
+	MealUnitTypeCarb       MealUnitType = "탄수화물"
 )
 
-// MealItem 사료/간식 아이템 엔티티
-type MealItem struct {
+// Meal 사료/간식 아이템 엔티티
+type Meals struct {
 	ID            uint       `json:"id" db:"id"`
 	PetUserRoleID uint       `json:"pet_user_role_id" db:"pet_user_role_id"`
 	DataType      DataType   `json:"data_type" db:"data_type"`
@@ -56,11 +56,11 @@ type MealItem struct {
 	IsDeleted     bool       `json:"is_deleted" db:"is_deleted"`
 }
 
-// MealItemUnit 사료/간식 단위 정의 엔티티
-type MealItemUnit struct {
+// MealUnit 사료/간식 단위 정의 엔티티
+type MealUnit struct {
 	ID           uint         `json:"id" db:"id"`
-	MealItemID   uint         `json:"meal_item_id" db:"meal_item_id"`
-	MealItemType MealItemType `json:"meal_item_type" db:"meal_item_type"`
+	MealID       uint         `json:"meal_id" db:"meal_id"`
+	MealUnitType MealUnitType `json:"meal_unit_type" db:"meal_unit_type"`
 	Unit         string       `json:"unit" db:"unit"`
 	UnitValue    string       `json:"unit_value" db:"unit_value"`
 }
@@ -68,7 +68,7 @@ type MealItemUnit struct {
 // MealHistory 급여 기록 엔티티
 type MealHistory struct {
 	ID           uint       `json:"id" db:"id"`
-	MealItemID   uint       `json:"meal_item_id" db:"meal_item_id"`
+	MealID       uint       `json:"meal_id" db:"meal_id"`
 	HistoryDate  time.Time  `json:"history_date" db:"history_date"`
 	MealType     MealType   `json:"meal_type" db:"meal_type"`
 	Name         string     `json:"name" db:"name"`
@@ -84,15 +84,15 @@ type MealHistory struct {
 type MealHistoryUnit struct {
 	ID            uint         `json:"id" db:"id"`
 	MealHistoryID uint         `json:"meal_histories_id" db:"meal_histories_id"`
-	MealItemType  MealItemType `json:"meal_item_type" db:"meal_item_type"`
+	MealUnitType  MealUnitType `json:"meal_unit_type" db:"meal_unit_type"`
 	Unit          string       `json:"unit" db:"unit"`
 	UnitValue     string       `json:"unit_value" db:"unit_value"`
 }
 
-// MealItemWithUnits 사료/간식 아이템과 단위 정보를 포함한 구조체
-type MealItemWithUnits struct {
-	MealItem
-	Units []MealItemUnit `json:"units"`
+// MealWithUnits 사료/간식 아이템과 단위 정보를 포함한 구조체
+type MealWithUnits struct {
+	Meals
+	Units []MealUnit `json:"units"`
 }
 
 // MealHistoryWithUnits 급여 기록과 단위 정보를 포함한 구조체
