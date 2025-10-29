@@ -30,7 +30,7 @@ func RunMigrations(db *sql.DB) error {
 		{
 			name: "사용자 테이블",
 			sql: `
-				CREATE TABLE IF NOT EXISTS owners (
+				CREATE TABLE IF NOT EXISTS USERS (
 					id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
 					email VARCHAR(100) NOT NULL,
 					name VARCHAR(255) UNIQUE NOT NULL,
@@ -39,25 +39,39 @@ func RunMigrations(db *sql.DB) error {
 			`,
 		},
 		{
-			name: "2",
+			name: "반려동물 테이블",
 			sql: `
-				CREATE TABLE IF NOT EXISTS pets (
+				CREATE TABLE IF NOT EXISTS PETS (
 					id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-					owner_id BIGINT NOT NULL,
+					registration_type VARCHAR(50) NOT NULL CHECK (registration_type IN ('OFFICIAL', 'MANUAL')),
+					reg_number VARCHAR(100) NOT NULL,
+					owner_user_id BIGINT NOT NULL,
 					name VARCHAR(100) NOT NULL,
+					animal_type VARCHAR(50) NOT NULL,
 					species VARCHAR(50) NOT NULL,
-					breed VARCHAR(100),
 					age INTEGER,
-					weight DECIMAL(5,2),
 					gender VARCHAR(10),
 					` + CommonColumns + `
 				);
 			`,
 		},
+
 		{
-			name: "3",
+			name: "반려동물 유저 권한 테이블",
 			sql: `
-				CREATE TABLE IF NOT EXISTS meals (
+				CREATE TABLE IF NOT EXISTS PET_USER_ROLES (
+					id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+					pet_id BIGINT NOT NULL,
+					user_id BIGINT NOT NULL,
+					role VARCHAR(50) NOT NULL CHECK (role IN ('OWNER', 'FAMILY_MEMBER', 'GUEST', 'CARETAKER')),
+					` + CommonColumns + `
+				);
+			`,
+		},
+		{
+			name: "식이 테이블",
+			sql: `
+				CREATE TABLE IF NOT EXISTS MEALS (
 					id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
 					pet_user_role_id BIGINT NOT NULL,
 					data_type VARCHAR(20) NOT NULL CHECK (data_type IN ('FIXED', 'VARIATION')),
@@ -70,11 +84,12 @@ func RunMigrations(db *sql.DB) error {
 			`,
 		},
 		{
-			name: "4",
+			name: "식이 단위 테이블",
 			sql: `
 				CREATE TABLE IF NOT EXISTS meal_units (
 					id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
 					meal_id BIGINT NOT NULL,
+					meal_unit_type VARCHAR(50) NOT NULL,
 					unit_type VARCHAR(10) NOT NULL CHECK (unit_type IN ('g', 'ml', '개', '포')),
 					amount DECIMAL(10,2) NOT NULL,
 					` + CommonColumns + `
@@ -82,23 +97,23 @@ func RunMigrations(db *sql.DB) error {
 			`,
 		},
 		{
-			name: "5",
+			name: "식이 기록 데이터 테이블",
 			sql: `
 				CREATE TABLE IF NOT EXISTS meal_histories (
 					id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
 					pet_id BIGINT NOT NULL,
 					meal_id BIGINT NOT NULL,
-					meal_date DATE NOT NULL,
-					meal_time TIME NOT NULL,
+					feed_date DATE NOT NULL,
+					meal_type TIME NOT NULL,
 					amount DECIMAL(10,2) NOT NULL,
-					unit VARCHAR(10) NOT NULL,
+					meal_category VARCHAR(100) NOT NULL,
 					notes TEXT,
 					` + CommonColumns + `
 				);
 			`,
 		},
 		{
-			name: "6",
+			name: "식이 기록 단위 테이블",
 			sql: `
 				CREATE TABLE IF NOT EXISTS meal_history_units (
 					id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
