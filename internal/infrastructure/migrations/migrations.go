@@ -78,7 +78,8 @@ func RunMigrations(db *sql.DB) error {
 					meal_type VARCHAR(20) NOT NULL CHECK (meal_type IN ('사료', '간식')),
 					meal_category VARCHAR(100) NOT NULL,
 					name VARCHAR(200) NOT NULL,
-					unit_type VARCHAR(10) NOT NULL CHECK (unit_type IN ('g', 'ml', '개', '포')),
+					unit_type VARCHAR(10) NOT NULL ,
+					total_amount VARCHAR(20) NOT NULL,
 					` + CommonColumns + `
 				);
 			`,
@@ -86,11 +87,11 @@ func RunMigrations(db *sql.DB) error {
 		{
 			name: "식이 단위 테이블",
 			sql: `
-				CREATE TABLE IF NOT EXISTS meal_units (
+				CREATE TABLE IF NOT EXISTS MEAL_UNITS (
 					id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
 					meal_id BIGINT NOT NULL,
 					meal_unit_type VARCHAR(50) NOT NULL,
-					unit_type VARCHAR(10) NOT NULL CHECK (unit_type IN ('g', 'ml', '개', '포')),
+					unit VARCHAR(10) NOT NULL CHECK (unit IN ('g', 'ml', '개', '포')),
 					amount DECIMAL(10,2) NOT NULL,
 					` + CommonColumns + `
 				);
@@ -104,6 +105,7 @@ func RunMigrations(db *sql.DB) error {
 					pet_id BIGINT NOT NULL,
 					meal_id BIGINT NOT NULL,
 					feed_date DATE NOT NULL,
+					name VARCHAR(100) NOT NULL,
 					meal_type TIME NOT NULL,
 					amount DECIMAL(10,2) NOT NULL,
 					meal_category VARCHAR(100) NOT NULL,
@@ -115,10 +117,10 @@ func RunMigrations(db *sql.DB) error {
 		{
 			name: "식이 기록 단위 테이블",
 			sql: `
-				CREATE TABLE IF NOT EXISTS meal_history_units (
+				CREATE TABLE IF NOT EXISTS MEAL_HISTORY_UNITS (
 					id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
 					meal_history_id BIGINT NOT NULL,
-					unit_type VARCHAR(10) NOT NULL CHECK (unit_type IN ('g', 'ml', '개', '포')),
+					unit VARCHAR(10) NOT NULL ,
 					amount DECIMAL(10,2) NOT NULL,
 					` + CommonColumns + `
 				);
